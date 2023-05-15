@@ -28,9 +28,6 @@ f1 <- base1[!is.na(Category),.(Total = round((sum(hhd_size*weight)/c1$V1*100),2)
 g1 <- Reduce(merge, list(d1, e1, f1))
 print(g1)
 
-## Generally a bad idea to split things up and then combine them.
-#;;; 1,6
-
 ## Problem 2
 base2 <- perdata[age>=15 & age<=59 & sex!=3,]
 base2$Sex <- ifelse(base2$sex==1, "Male", ifelse(base2$sex==2, "Female", "Others"))
@@ -44,9 +41,6 @@ f2 <- base2[(whether_subsidiary==1) | (whether_subsidiary==2 & status_code<=72),
 g2 <- Reduce(merge,list(a2, b2, c2, d2, e2, f2))
 h2 <- g2[,.(Rural = (round((d/a*100),2)),Urban = (round((e/b*100),2)),Total = (round((f/c*100),2))), keyby = Sex]
 print(h2)
-
-## Same problem as above.
-#;;; 2,7
 
 ## Problem 3
 base3 <- perdata[age>=6 & age<=24,]
@@ -66,9 +60,6 @@ i3 <- Reduce(merge, list(a3, b3, c3, d3, e3, f3, g3, h3))
 j3 <- i3[,.("Rural Male" = (round((e/a*100),2)), "Rural Female" = (round((f/b*100),2)),
             "Urban Male" = (round((g/c*100),2)), "Urban Female" = (round((h/d*100),2))), keyby = Age]
 print(j3)
-
-## Same problem as above
-#;;; 3,6
 
 ## Problem 4
 perdata$status_1 <- ifelse(perdata$status_code>=11 & perdata$status_code<=51, 1, 0)
@@ -106,9 +97,6 @@ k4 <- rbind(e4,j4)
 m4 <- k4[!is.na(Industry),]
 print(m4)
 
-## This is using computer like a calculator
-#;;; 4,2
-
 ## Problem 5
 a5 <- melt(h2,id = "Sex", variable.name = "Sector", value.name = "Percentage")
 b5 <- ggplot(data = a5, aes(x = Sector, y = Percentage, fill = Sex))
@@ -116,8 +104,6 @@ b5 <- b5 + geom_bar(stat ="identity", position = "dodge", width = 0.5)
 b5 <- b5 + geom_text(aes(label = Percentage), position = position_dodge(0.5), vjust = -0.25)
 b5 <- b5 + ggtitle("Work participation rates among men and women")
 ggsave(b5, file = "prob5.png")
-
-#;;; 5,6
 
 ## Problem 6
 a6 <- base4[sex==1 & sector==1,.("Rural Male" = round((sum(weight)/243797535*100),2)), keyby = Industry]
@@ -143,10 +129,6 @@ n6 <- n6 + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 n6 <- n6 + ggtitle("Proportion of Labour Force in Different Industries")
 ggsave(n6, file = "prob6.png")
 
-## Where are these numbers coming from?
-
-#;;; 6,2
-
 ## Problem 7
 base7 <- perdata[age>=15 & age<=59 & sex!=3,]
 base7[(status_code_activity1_day1>=11 & status_code_activity1_day1<=72) | (status_code_activity2_day1>=11 & status_code_activity2_day1<=72),day1:=1]
@@ -171,9 +153,6 @@ d7 <- base7[quarter=="Q4",.("Quarter 4" = round((sum(total*weight)/sum(weight)*1
 e7 <- base7[!is.na(quarter),.("All Quarters" = round((sum(total*weight)/sum(weight)*100)/7,2)),keyby = Category]
 f7 <- Reduce(merge,list(a7, b7, c7, d7, e7))
 
-## Why split?
-#;;; 7.1,5
-
 g7 <- melt(f7,id = "Category", variable.name = "Quarter", value.name = "Percentage")
 h7 <- ggplot(g7, aes(x = Category, y = Percentage))
 h7 <- h7 + geom_bar(stat = "identity",fill = "#FF9999", colour = "black", width = 0.5)
@@ -183,7 +162,3 @@ h7 <- h7 + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 h7 <- h7 + facet_wrap(~Quarter)
 h7 <- h7 + ggtitle("Proportion of person days when people were employed")
 ggsave(h7, file = "prob7.png")
-
-## What is the graph showing? To be able to compare quarters, the graph should have quarters on x-axis and faceted by sector and sex.
-
-#;;; 7.2,6
